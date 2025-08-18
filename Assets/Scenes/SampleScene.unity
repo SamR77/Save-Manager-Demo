@@ -907,8 +907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a070dc49323d9409833fca63c1493c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Position: {x: 0, y: 0, z: 0}
-  Health: 0
+  health: 100
   XP: 0
 --- !u!1 &956081473
 GameObject:
@@ -1155,8 +1154,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af016c25bb8bf904181e94deb3e127fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SettingsManager: {fileID: 901429387}
-  Player: {fileID: 906611976}
 --- !u!4 &1173120851
 Transform:
   m_ObjectHideFlags: 0
@@ -1507,7 +1504,7 @@ GameObject:
   - component: {fileID: 1554631688}
   - component: {fileID: 1554631687}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: input keys
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1554,12 +1551,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Move = W A S D
 
-    Save SettingData = NumPad 7
 
-    Save PlayerData =
-    NumPad 9
+    Save GameData = F5
 
-    Load all data = L'
+    Load GameData = F10
+
+
+    Save
+    Settings = F7
+
+    Load Settings = F11'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
