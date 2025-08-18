@@ -25,7 +25,7 @@ public static class SaveManager
         
         string json = JsonUtility.ToJson(new SaveData(data)); // Convert the dictionary to JSON format using a helper class
         
-        File.WriteAllText(Application.persistentDataPath + "SaveXX.save", json); // Write the JSON string to a file in the persistent data path
+        File.WriteAllText(Application.persistentDataPath + "/SaveXX.save", json); // Write the JSON string to a file in the persistent data path
         
         Debug.Log("Game Saved!"); // Log confirmation to the Unity console
     }
@@ -34,7 +34,7 @@ public static class SaveManager
     public static void LoadGameData()
     {
         
-        string path = Application.persistentDataPath + "SaveXX.save"; // Construct the full path to the save file
+        string path = Application.persistentDataPath + "/SaveXX.save"; // Construct the full path to the save file
 
         // Check if the file exists before attempting to read
         if (File.Exists(path))
@@ -58,7 +58,7 @@ public static class SaveManager
        
         string json = JsonUtility.ToJson(new SaveData(data), true );  // Convert the dictionary to JSON format using a helper class
         
-        File.WriteAllText(Application.persistentDataPath + "Settings.cfg", json); // Write the JSON string to a settings file
+        File.WriteAllText(Application.persistentDataPath + "/Settings.cfg", json); // Write the JSON string to a settings file
         
         Debug.Log("Settings Saved!"); // Log confirmation to the Unity console
     }
@@ -66,7 +66,7 @@ public static class SaveManager
     // Loads settings from a previously saved file
     public static void LoadSettings()
     {        
-        string path = Application.persistentDataPath + "Settings.cfg"; // Construct the full path to the settings file
+        string path = Application.persistentDataPath + "/Settings.cfg"; // Construct the full path to the settings file
 
         if (File.Exists(path)) // Check if the file exists before attempting to read
         {            

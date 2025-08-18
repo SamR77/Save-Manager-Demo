@@ -47,12 +47,12 @@ public class SettingsManager : MonoBehaviour
     // Converts volume values to strings and stores them.
     private void HandleSave()
     {
-        // Create an instance of GameData with the current player stats
+        // Create an instance of SettingsData with the current player stats
         SettingsData settingsData = new SettingsData(masterVolume, musicVolume, sfxVolume, voiceoverVolume);
 
-        // Convert the GameData object to a JSON string and save it
+        // Convert the SettingsData object to a JSON string and save it
         string json = JsonUtility.ToJson(settingsData);
-        SaveManager.SetString("GameData", json);
+        SaveManager.SetString("SaveData", json);
     }
 
     // Called when SaveManager wants to load settings.
@@ -65,7 +65,7 @@ public class SettingsManager : MonoBehaviour
         // Check if the data exists before trying to load it
         if (!string.IsNullOrEmpty(json))
         {
-            // Deserialize the JSON string back into a GameData object
+            // Deserialize the JSON string back into a SettingsData object
             SettingsData settingsData = JsonUtility.FromJson<SettingsData>(json);
 
             // Update the player stats and position
