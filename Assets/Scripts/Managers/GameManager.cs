@@ -1,22 +1,15 @@
-<<<<<<< Updated upstream
-=======
 //using System.Diagnostics;
 using System.IO;
->>>>>>> Stashed changes
 using UnityEngine;
 using UnityEngine.Rendering;
 
 
 public class GameManager : MonoBehaviour
 {
-<<<<<<< Updated upstream
-    // make this a singleton
-=======
     private PlayerController player;
     private SettingsManager settingsManager;
 
     // Singleton pattern
->>>>>>> Stashed changes
     private static GameManager instance;
     public static GameManager Instance
     {
@@ -35,27 +28,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-<<<<<<< Updated upstream
-
-    public SettingsManager SettingsManager; // reference to the SettingsManager script
-    public PlayerController Player;
-    public SaveManager SaveManager;
-
-    //declare int with a range of 0 to 100 for each volume setting
-
-
-
-=======
 
 
     void Start()
     {
         SaveManager.Init();
-
-        // Subscribe to SaveManager events when the object is initialized
-        SaveManager.OnSaveGameData += SaveGame;
-        SaveManager.OnLoadGameData += LoadGame;
-
 
         // reference PlayerController
         player = GetComponentInChildren<PlayerController>();
@@ -64,41 +41,8 @@ public class GameManager : MonoBehaviour
 
     void OnDestroy()
     {
-        // Unsubscribe from SaveManager events when the object is destroyed
-        SaveManager.OnSaveGameData -= SaveGame;
-        SaveManager.OnLoadGameData -= LoadGame;
+        
     }
->>>>>>> Stashed changes
-
-    // Update is called once per frame
-    void Update()
-    {
-
-<<<<<<< Updated upstream
-    }
-=======
-
-        /*
-        #region SimplePlayerController
-        // Get horizontal and vertical input from keyboard (WASD or arrow keys)
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-
-        // Create a movement vector based on input
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
-
-        // Move the player in world space using the movement vector
-        // Multiplied by deltaTime for frame-rate independence and speed factor of 5
-        transform.Translate(movement * Time.deltaTime * 5.0f, Space.World);
-
-        #endregion
-        */
-
-    }
-
-
-
- 
 
 
 
@@ -110,8 +54,7 @@ public class GameManager : MonoBehaviour
     {
         // Save
 
-
-        // store all data in a SaveGameData object
+        // store all data in a temporary SaveGameData object
         SaveGameData saveGameData = new SaveGameData
         {
             PlayerHealth = player.playerHealth,
@@ -134,6 +77,7 @@ public class GameManager : MonoBehaviour
 
         if (loadGameString != null)
         {
+            // Load save data into a temporart SaveGameData Object
             SaveGameData saveObject = JsonUtility.FromJson<SaveGameData>(loadGameString);
 
 
@@ -161,7 +105,6 @@ public class GameManager : MonoBehaviour
 
         Application.OpenURL("file://" + folderPath);
 
-        //Process.Start("explorer.exe", folderPath);
     }
 
     private class SaveGameData
@@ -234,5 +177,4 @@ public class GameManager : MonoBehaviour
     #endregion
 
 
->>>>>>> Stashed changes
 }

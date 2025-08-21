@@ -3392,18 +3392,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a070dc49323d9409833fca63c1493c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-<<<<<<< Updated upstream
-  Position: {x: 0, y: 0, z: 0}
-  Health: 0
-  XP: 0
-=======
   playerHealth: 100
   playerXP: 99
   playerPosition: {x: 0, y: 0, z: 0}
   playerHealth_txt: {fileID: 672719723}
   playerXP_txt: {fileID: 2129944662}
   PlayerPosition_txt: {fileID: 1021781167}
->>>>>>> Stashed changes
 --- !u!1 &956081473
 GameObject:
   m_ObjectHideFlags: 0
@@ -4691,8 +4685,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af016c25bb8bf904181e94deb3e127fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SettingsManager: {fileID: 901429387}
-  Player: {fileID: 906611976}
 --- !u!4 &1173120851
 Transform:
   m_ObjectHideFlags: 0
@@ -6219,18 +6211,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-<<<<<<< Updated upstream
-  m_text: 'Move = W A S D
-
-    Save SettingData = NumPad 7
-
-    Save PlayerData =
-    NumPad 9
-
-    Load all data = L'
-=======
   m_text: Move = W A S D
->>>>>>> Stashed changes
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6569,7 +6550,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: -10.000061}
+  m_AnchoredPosition: {x: -0.000061035156, y: -10}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1669465963
