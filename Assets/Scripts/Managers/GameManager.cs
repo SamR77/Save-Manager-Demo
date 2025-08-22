@@ -1,13 +1,26 @@
-//using System.Diagnostics;
-using System.IO;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
+using TMPro;
+using System;
 
 
 public class GameManager : MonoBehaviour
 {
+    public GameData currentGameData;
+
     private PlayerController player;
     private SettingsManager settingsManager;
+
+    public GameObject saveLoadIndicator;
+
+    public TMP_Text saveLoadIndicator_text;
+
+    public Stopwatch saveLoadStopwatch;
+
+    public int simulatedPrepOperationTime = 1500; // 1.5 seconds
+    public int simulatedSaveLoadOperationTime = 3000; // 5 seconds
+        
+
 
     // Singleton pattern
     private static GameManager instance;
@@ -28,76 +41,160 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
-    void Start()
+    private void OnEnable()
     {
-        SaveManager.Init();
 
-        // reference PlayerController
-        player = GetComponentInChildren<PlayerController>();
-        settingsManager = GetComponentInChildren<SettingsManager>();
+        SaveManager.PreparingToSave += OnPreparingToSave;
+        SaveManager.Saving += OnSaving;
+        SaveManager.FinishedSaving += OnFinishedSaving;
+
+
+        SaveManager.PreparingToLoad += OnPreparingToLoad;
+        SaveManager.Loading += OnLoading;
+        SaveManager.FinishedLoading += OnFinishedLoading;
     }
 
     void OnDestroy()
     {
-        
+        SaveManager.PreparingToSave -= OnPreparingToSave;
+
+        SaveManager.PreparingToLoad -= OnPreparingToLoad;
+        SaveManager.Loading -= OnLoading;
+        SaveManager.FinishedLoading -= OnFinishedLoading;
     }
 
+    #region Save Game
 
+    private void SaveGame()
+    { 
+        saveLoadStopwatch.Begin();
+        SaveManager.SaveGame(this);
+    }
 
-
-    #region Game Save Handling
-
-    // Called when SaveManager triggers OnSaveGameData event
-    public void SaveGame()
+    private void OnPreparingToSave()
     {
-        // Save
+        UnityEngine.Debug.Log("OnPreparingToSave, time: " + saveLoadStopwatch.GetMilliseconds() );
 
-        // store all data in a temporary SaveGameData object
-        SaveGameData saveGameData = new SaveGameData
+        saveLoadIndicator_text.text = "Saving...";
+
+        Time.timeScale = 0f; // Pause Game
+        player.PlayerInputEnabled = false;
+        saveLoadIndicator.SetActive(true);
+    }
+
+    public string PrepareGameData()
+    {
+        currentGameData = new GameData
         {
             PlayerHealth = player.playerHealth,
             PlayerXP = player.playerXP,
             PlayerPosition = player.transform.position
         };
 
-        // Convert SaveGameData to string to prep for Json
-        string saveGameString = JsonUtility.ToJson(saveGameData);
-
-        // Call the Save method in SaveSystem and pass 
-        SaveManager.SaveGame(saveGameString);
+        return JsonUtility.ToJson(currentGameData);
     }
 
-    public void LoadGame()
+  
+
+private void OnSaving()
     {
-        Debug.Log("Load Game Called");
+        UnityEngine.Debug.Log("OnSaving, time: " + saveLoadStopwatch.GetMilliseconds());
+    }
 
-        string loadGameString = SaveManager.LoadGameData();
+    private void OnFinishedSaving()
+    {
+        Time.timeScale = 1f; // Resume Game 
+        player.PlayerInputEnabled = true;
+        saveLoadIndicator.SetActive(false);
 
-        if (loadGameString != null)
+        UnityEngine.Debug.Log("OnFinishedSaving, time: " + saveLoadStopwatch.GetRawElapsedTime());
+    }
+
+
+    #endregion
+
+    #region Load Game
+
+    public void LoadMostRecentSave()
+    {
+        // This will internally call ApplyGameData() and then trigger OnDataLoaded
+        saveLoadStopwatch.Begin();
+
+        SaveManager.LoadGame();
+    }
+
+    private void OnPreparingToLoad()
+    {
+        UnityEngine.Debug.Log("OnPreparingToLoad, time: " + saveLoadStopwatch.GetMilliseconds());
+
+        saveLoadIndicator_text.text = "Loading...";
+
+        Time.timeScale = 0f; // Pause Game
+        player.PlayerInputEnabled = false;
+        saveLoadIndicator.SetActive(true);
+    }
+
+    private void OnLoading(string jsonGameData, Action OnComplete)
+    {
+        UnityEngine.Debug.Log("OnLoading, time: " + saveLoadStopwatch.GetMilliseconds());
+
+        if (!string.IsNullOrEmpty(jsonGameData))
         {
-            // Load save data into a temporart SaveGameData Object
-            SaveGameData saveObject = JsonUtility.FromJson<SaveGameData>(loadGameString);
-
-
-            // TODO: consider creating a method in player Controller to populate these values, and just pass them through.
-            player.playerHealth = saveObject.PlayerHealth;
-            player.playerXP = saveObject.PlayerXP;
-
-            // Move Player to Position
-            player.transform.position = saveObject.PlayerPosition;
-
-            // Update the debug UI to show the new values
-            player.RefreshUI();
-
+            currentGameData = JsonUtility.FromJson<GameData>(jsonGameData);
+            ApplyGameData(currentGameData);
         }
         else
         {
-            Debug.LogWarning("No save data found");
+            UnityEngine.Debug.LogWarning("No game data found to load.");
         }
+        OnComplete?.Invoke();
     }
 
+    private void ApplyGameData(GameData data)
+    {
+            // Apply loaded values to the player
+            player.playerHealth = data.PlayerHealth;
+            player.playerXP = data.PlayerXP;
+            player.transform.position = data.PlayerPosition;
+
+            // Refresh UI
+            player.RefreshUI();      
+    }
+
+    private void OnFinishedLoading()
+    {
+
+        Time.timeScale = 1f; // Resume Game 
+        player.PlayerInputEnabled = true;
+        saveLoadIndicator.SetActive(false);
+
+        UnityEngine.Debug.Log("OnFinishedLoading, time: " + saveLoadStopwatch.GetMilliseconds());
+
+    }
+
+    #endregion
+
+
+    void Start()
+    {
+        SaveManager.Init();
+        // reference PlayerController
+        player = GetComponentInChildren<PlayerController>();
+        settingsManager = GetComponentInChildren<SettingsManager>();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
     public void OpenSavedGameFileLocation()
     {
@@ -107,16 +204,14 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private class SaveGameData
+    [Serializable]
+    public class GameData
     {
         public int PlayerHealth;
         public int PlayerXP;
         public Vector3 PlayerPosition;
     }
 
-    #endregion
-
-    #region Settings Save Handling
 
     public void SaveSettings()
     {
@@ -155,7 +250,7 @@ public class GameManager : MonoBehaviour
 
 
 
-            Debug.Log("Settings loaded successfully.");            
+            UnityEngine.Debug.Log("Settings loaded successfully.");            
         }
     }
 
@@ -166,15 +261,39 @@ public class GameManager : MonoBehaviour
         Application.OpenURL("file://" + folderPath);
     }
 
-    private class SettingsData
-    { 
-        public int MasterVolume;
-        public int MusicVolume;
-        public int SFXVolume;
-        public int VoiceoverVolume;
+
+    #region Helper Methods
+
+    
+    public void SimulateOperation(float seconds, Action onComplete)
+    {
+        StartCoroutine(SimulateOperationCorpoutine(seconds, onComplete));
     }
 
+    public IEnumerator SimulateOperationCorpoutine(float seconds, Action onComplete)
+    {
+        float elapsed = 0f;
+        while (elapsed < seconds)
+        {
+            elapsed += Time.unscaledDeltaTime; // Works even when Time.timeScale = 0
+            yield return null;
+        }
+
+        onComplete?.Invoke();
+    }
+    
     #endregion
 
+    private class SettingsData
+    { 
+        public int MasterVolume = 50;
+        public int MusicVolume = 50;
+        public int SFXVolume = 50;
+        public int VoiceoverVolume = 50;
+
+        // Possible add logic to validate that data is within acceptable range [0-100]
+    }
+
+   
 
 }
